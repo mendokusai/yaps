@@ -34,6 +34,9 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # for websocket
 gem 'websocket-rails'
 
+# for OmniAuth Reddit logins
+gem 'omniauth-reddit', :git => 'git://github.com/jackdempsey/omniauth-reddit.git'
+
 # Use Unicorn as the app server
 # gem 'unicorn'
 
