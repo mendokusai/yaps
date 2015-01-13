@@ -9,25 +9,111 @@
 </ul> -->
 
 <div id="container">
-  <ul id="messages"></ul>
   <form action="">
-    <input id="m" autocomplete="off" /><button>Send</button>
+    <input id="m" autofocus=true autocomplete="off" /><button>Send</button>
   </form>
+  <ul id="messages"></ul>
 </div>
+
 <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <!-- <script src="http://socket.io/socket.io.js"></script> -->
 
 <script>
-  var socket = io("<%= Rails.configuration.socket_url %>");
-  $('form').submit(function(){
-    socket.emit('chat message', $('#m').val());
-    $('#m').val('');
-    return false;
-  });
-  socket.on('chat message', function(msg){
-    $('#messages').append($('<li>').text(msg));
-  });
+$('#top').on('click', function(){
+  window.location = "/";
+});
+
+function getParameterByName(name) {
+  name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+  var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+      results = regex.exec(location.search);
+  return results === null ? "Anonymous" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+function get_url(message){
+  var url = message.match(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/);
+  if ( url ) {
+    url = url[0];
+    if (url[0] != "h"){
+      url = "http://" + url;
+    };
+  }
+  return url === null ? "none" : url;
+}
+
+var socket = io("<%= Rails.configuration.socket_url %>");
+$('form').submit(function(){
+  var message = $('#m').val();
+
+  var url = get_url(message);
+
+  var date = new Date();
+  var time = date.toLocaleTimeString();
+  var username = getParameterByName('name');
+  var hash = {
+    date: date,
+    name: username,
+    text: message,
+    stamp: time,
+    url: url
+  };
+  // console.log(hash);
+  socket.emit('chat message', hash);
+  $('#m').val("");
+  return false;  
+});
+
+socket.on('chat message', function(msg){
+  console.log(msg);
+  var processed_user, processed_msg, processed_stamp, print_message, processed_link;
+
+  processed_user = '<p><span class="user">' + msg.name + '</span>';
+  processed_msg = '<span class="message">' + msg.text + '</span>';
+  processed_stamp = '<span class="time"><em>@' + msg.stamp + '</em></span></p>';
+  if (msg.url != "none"){
+    processed_link = '<span class="message"><a href="' + msg.url + '" target="_blank">link</a></span>';
+  } else{
+    processed_link = "";
+  };
+  print_message = processed_user + ": " + processed_msg + " " + processed_link + " " + processed_stamp;
+  console.log(print_message);
+  $('#messages').append($('<li>').html(print_message));
+});
+
 </script>
+
+// <script>
+// var user = current_user.name
+
+// chat_user = function(user) {
+//   if (user){
+//     chat_user = user;
+//   } else {
+//     chat_user = "Anonymous";
+//   };
+//   return chat_user;
+// };
+
+// var username = chat_user(user);
+// var time;
+
+//   var socket = io("<%= Rails.configuration.socket_url %>");
+//   $('form').submit(function(){
+//     time = new Date();
+//     var text = $('#m').val();
+//     full_message = {
+//         name: username,
+//         message: text,
+//         created: time
+//       }
+//     socket.emit('chat message', $('#m').val());
+//     $('#m').val('');
+//     return false;
+//   });
+//   socket.on('chat message', function(msg){
+//     $('#messages').append($('<li>').text(msg));
+//   });
+// </script>
 
 

@@ -20,3 +20,19 @@
 // 	});
 
 // });
+var username;
+
+$(function(){
+	$('#submit_username').on('hover', function(){
+		$('#submit_username').toggleClass('.hoverbutton');
+	})
+	$('#submit_username').on('click', function(){
+		username = $('#username').val();
+		if (username.length == 0){
+			username = "Anonymous"
+		}
+		console.log(username);
+		window.location = "/welcome/index?name="+ username;
+	});
+
+});
