@@ -19,7 +19,7 @@
 <!-- <script src="http://socket.io/socket.io.js"></script> -->
 
 <script>
-  var socket = io("https://yapsnode.herokuapp.com/");
+  var socket = io("<%= Rails.configuration.socket_url %>");
   $('form').submit(function(){
     socket.emit('chat message', $('#m').val());
     $('#m').val('');
