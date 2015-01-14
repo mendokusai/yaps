@@ -15,7 +15,7 @@
 	  <p id="user_name" class="navbar-text navbar-right">Signed in as <%= current_user.name %></p>
 
 	  <script>
-	  	var currentUser = <%= raw current_user.to_json %>;
+	  	currentUser = <%= raw current_user.to_json %>;
 	  </script>
   <% end %>
 </div>

@@ -1,3 +1,4 @@
+var currentUser;
 // var dispatcher;
 
 // var message = {
@@ -21,9 +22,10 @@
 
 // });
 
-var username;
+
 
 $(function(){
+	var username;
 	// console.log(currentUser.name);
 	$('#submit_username').on('hover', function(){
 		$('#submit_username').toggleClass('.hoverbutton');
