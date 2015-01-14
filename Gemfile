@@ -44,7 +44,7 @@ gem 'unicorn'
 # gem 'capistrano-rails', group: :development
 
 # HTTParty is bringing the API Query fun!
-gem install httparty
+gem 'httparty'
 
 
 group :development, :test do
