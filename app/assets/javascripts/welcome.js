@@ -36,7 +36,7 @@ $(function(){
 
 	$('#submit_username').on('click', function(){
 		username = $('#username').val();
-		if (currentUser){
+		if (currentUser != undefined){
 			username = currentUser.name;
 		} else if (username.length == 0){
 			username = "Anonymous"

@@ -50,7 +50,12 @@ $('form').submit(function(){
 
   var date = new Date();
   var time = date.toLocaleTimeString();
-  var username = currentUser.name || getParameterByName('name');
+  var username;
+  if (currentUser != undefined){
+    username = currentUser.name;
+  } else{
+   username = getParameterByName('name');
+  };
   var hash = {
     date: date,
     name: username,
