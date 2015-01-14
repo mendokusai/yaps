@@ -14,7 +14,6 @@
   </form>
   <ul id="messages"></ul>
 </div>
-
 <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <!-- <script src="http://socket.io/socket.io.js"></script> -->
@@ -29,6 +28,17 @@ function getParameterByName(name) {
   var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
       results = regex.exec(location.search);
   return results === null ? "Anonymous" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+function get_image(message){
+  var img = message.match(/^https?:\/\/(www)?(.+)\/(.+)\.(png|jpg|gif)\??(.*)$/);
+  if (img){
+    img = img[0];
+    if (img[0] != "h"){
+      img = "http://" + img;
+    };
+  };
+  return img === null ? "none" : img;
 }
 
 function get_url(message){
@@ -47,6 +57,7 @@ $('form').submit(function(){
   var message = $('#m').val();
 
   var url = get_url(message);
+  var image = get_image(message);
 
   var date = new Date();
   var time = date.toLocaleTimeString();
@@ -55,13 +66,16 @@ $('form').submit(function(){
     username = currentUser.name;
   } else{
    username = getParameterByName('name');
+   console.log(url);
+   console.log(image);
   };
   var hash = {
     date: date,
     name: username,
     text: message,
     stamp: time,
-    url: url
+    url: url,
+    image: image
   };
   // console.log(hash);
   socket.emit('chat message', hash);
@@ -70,17 +84,22 @@ $('form').submit(function(){
 });
 
 socket.on('chat message', function(msg){
-  var processed_user, processed_msg, processed_stamp, print_message, processed_link;
+  var processed_user, processed_msg, processed_stamp, print_message, processed_image, processed_link;
 
   processed_user = '<p><span class="user">' + msg.name + '</span>';
   processed_msg = '<span class="message">' + msg.text + '</span>';
   processed_stamp = '<span class="time"><em>@' + msg.stamp + '</em></span></p>';
+  
   if (msg.url != "none"){
     processed_link = '<span class="message"><a href="' + msg.url + '" target="_blank">link</a></span>';
   } else{
     processed_link = "";
   };
   print_message = processed_user + ": " + processed_msg + " " + processed_link + " " + processed_stamp;
+  
+  if (msg.image != "none"){
+    print_message = print_message + "<img src='" + msg.image +"' width='90%'>";
+  };
   $('#messages').append($('<li>').html(print_message));
 });
 
