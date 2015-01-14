@@ -98,7 +98,7 @@ socket.on('chat message', function(msg){
   print_message = processed_user + ": " + processed_msg + " " + processed_link + " " + processed_stamp;
   
   if (msg.image != "none"){
-    print_message = print_message + "<img src='" + msg.image +"' width='90%'>";
+    print_message = print_message + "<img class='img' src='" + msg.image +"' max-width='100%'>";
   };
   $('#messages').append($('<li>').html(print_message));
 });
