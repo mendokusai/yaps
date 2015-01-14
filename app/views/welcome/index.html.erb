@@ -50,7 +50,7 @@ $('form').submit(function(){
 
   var date = new Date();
   var time = date.toLocaleTimeString();
-  var username = getParameterByName('name');
+  var username = currentUser.name || getParameterByName('name');
   var hash = {
     date: date,
     name: username,
@@ -82,38 +82,5 @@ socket.on('chat message', function(msg){
 });
 
 </script>
-
-// <script>
-// var user = current_user.name
-
-// chat_user = function(user) {
-//   if (user){
-//     chat_user = user;
-//   } else {
-//     chat_user = "Anonymous";
-//   };
-//   return chat_user;
-// };
-
-// var username = chat_user(user);
-// var time;
-
-//   var socket = io("<%= Rails.configuration.socket_url %>");
-//   $('form').submit(function(){
-//     time = new Date();
-//     var text = $('#m').val();
-//     full_message = {
-//         name: username,
-//         message: text,
-//         created: time
-//       }
-//     socket.emit('chat message', $('#m').val());
-//     $('#m').val('');
-//     return false;
-//   });
-//   socket.on('chat message', function(msg){
-//     $('#messages').append($('<li>').text(msg));
-//   });
-// </script>
 
 
