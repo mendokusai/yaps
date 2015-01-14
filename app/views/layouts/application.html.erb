@@ -12,7 +12,11 @@
 <body>
 <div id="sign_in_status">
   <% if current_user %>
-	  <p class="navbar-text navbar-right">Signed in as <%= current_user.name %></p>
+	  <p id="user_name" class="navbar-text navbar-right">Signed in as <%= current_user.name %></p>
+
+	  <script>
+	  	currentUser = <%= raw current_user.to_json %>;
+	  </script>
   <% end %>
 </div>
 <%= yield %>
