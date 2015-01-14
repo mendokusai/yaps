@@ -3,14 +3,11 @@ class SessionsController < ApplicationController
     @user = User.find_or_create_from_auth_hash(auth_hash)
     session[:user_id] = @user.id
     # self.current_user = @user
-    @info = HTTParty.get("https://oauth.reddit.com/api/subreddits/mine/subscriber.json", headers: {
+    @info = HTTParty.get("https://oauth.reddit.com/subreddits/mine/subscriber.json", headers: {
       "Authorization" => "bearer #{@user.token}",
       "User-Agent" => "Yaps/1.0 by contact"
     })
-
-
-    @info = HTTParty.get("https://oauth.reddit.com/subreddits/mine/subscriber.json", headers: { "Authorization" => "bearer #{@user.token}", "User-Agent" => "Yaps/1.0 by contact" })
-    
+  
     redirect_to welcome_index_path
   end
 
