@@ -30,16 +30,20 @@ form input { border: 0; padding: 10px; width: 80%; margin-right: .5%; }
 	background: #95e4e5;
 	height: 100px;
 	padding-top: 10px;
+	cursor:pointer;
 }
 #messages { 
-	list-style-type: none; 
+	list-style-type: none;
+	border-top: 350px; 
 	margin: 0; 
 	padding: 0; 
 }
 #messages li { 
-	padding: 5px 10px; 
+	padding: 5px 10px;
+
 }
 #container {
+
 	height: 500px;
 	background-color: #cce2e2;
 	margin-left: 12%;
@@ -47,4 +51,34 @@ form input { border: 0; padding: 10px; width: 80%; margin-right: .5%; }
 }
 #messages li:nth-child(odd) { 
 	background: #95e4e5; 
+}
+#messages li:nth-child(even) { 
+	background: #cce2e2; 
+}
+
+.hoverbutton {
+	background-color: #88e0ea;
+}
+/*.user li:nth-child(odd) {
+	color: #F76F00; /*ORANGE
+}*/
+
+.user {
+	font-size: 1.3em;
+	color: #F76F00; /*BLUE*/
+	float:left;
+}
+
+.message {
+	font-size: 1.2em;
+	color: black;
+	padding-left: 10px;
+	/*max-width: 1000px;*/
+	word-wrap:break-word;
+}
+
+.time {
+	font-size: 1em;
+	color: #2796e5; 
+	float: right;
 }

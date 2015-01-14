@@ -2,21 +2,19 @@
 <html>
 <head>
   <title>Yaps</title>
+  <!-- set the viewport -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-
-  <!-- for node chatbox  -->
-  
-
 
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
 </head>
 <body>
-
+<div id="sign_in_status">
   <% if current_user %>
-  <p class="navbar-text navbar-right">Signed in as <%= current_user.name %></p>
+	  <p class="navbar-text navbar-right">Signed in as <%= current_user.name %></p>
   <% end %>
+</div>
 <%= yield %>
 
 </body>
