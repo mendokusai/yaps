@@ -39,6 +39,12 @@ class SessionsController < ApplicationController
     redirect_to welcome_index_path
   end
 
+  def logout_session
+    reset_session
+    # binding.pry
+    redirect_to root_path
+  end
+
 # /api/v1/me
 # /api/v1/me/karma
 # /subreddits/mine/subscriber.json
