@@ -4,7 +4,7 @@
   <title>Yaps</title>
   <!-- set the viewport -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-
+  <link href='http://fonts.googleapis.com/css?family=Megrim' rel='stylesheet' type='text/css'>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
@@ -12,12 +12,13 @@
 <body>
 <div id="sign_in_status">
   <% if current_user %>
-	  <p id="user_name" class="navbar-text navbar-right">Signed in as <%= current_user.name %> <%= link_to "Sign Out", logout_path %> </p>
+	  <p id="user_name" class="navbar-text navbar-right">Signed in as <%= current_user.name %> <%= link_to "  (sign out)", logout_path %> </p>
 	  <script>
 	  	currentUser = <%= raw current_user.to_json %>;
 	  </script>
   <% end %>
 </div>
+<div id="top"><h1>Yaps.co</h1></div>
 <%= yield %>
 
 </body>
