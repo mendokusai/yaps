@@ -31,6 +31,7 @@ form {
 }
 
 form input { 
+	margin-top: 10px;
 	border: 0; 
 	padding: 10px; 
 	width: 80%; 
@@ -59,13 +60,17 @@ h1 {
 }
 
 #top {
-	margin-top: 30px;
+	/*margin-top: 30px;*/
 	background: #336699;
 	height: 100px;
 	cursor: pointer;
 	border-radius: 25px;
 	width: 98%;
 	position: fixed;
+}
+
+#user_box {
+	margin-top: 130px;
 }
 #messages { 
 	list-style-type: none;
@@ -81,6 +86,8 @@ h1 {
 }
 #sign_in_status {
 	z-index: 1;
+	height: 30px;
+	width: 100%;
 }
 
 #container {

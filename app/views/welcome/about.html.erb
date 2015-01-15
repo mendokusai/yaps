@@ -1,9 +1,3 @@
-<div id="top">
-  <span id="title_logo">
-    <h1>Yaps.co</h1>
-  </span> 
-</div>
-
 <div id="tagline">
 <p>A webchat site built with a goal of bringing Redditors together.</p>
 </div>
@@ -12,7 +6,7 @@
 	<% unless current_user %>
 	<button id="reddit_login">Login with Reddit</button>   or   
 	
-	<input type="text" id="username" autofocus=true placeholder="Choose a handle">
+	<input type="text" id="username" autofocus=true placeholder="Choose a handle" maxlength="10">
 	<% end %>
 	<button id="submit_username">Go to Chat</button>
 </div>

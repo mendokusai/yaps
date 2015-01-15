@@ -33,6 +33,11 @@
     username = currentUser.name;
   } else{
     username = getParameterByName('name');
+    if (username.length >20){
+      username.split("");
+      username.splice(0,20);
+      username.join();
+    };
   };
   var data = {username: username};
   socket.emit('user config', data);
