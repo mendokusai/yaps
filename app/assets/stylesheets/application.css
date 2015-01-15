@@ -16,15 +16,14 @@
 
 
 * { 
-	/*margin: 0; */
 	box-sizing: border-box; 
 }
 body {
-	background: #e1f2f4;
+	background: #eff7ff;
 }
 
 form { 
-	padding: 30px; 
+	padding: 60px; 
 	position: fixed; 
 	left: 250px; 
 	top: 0px; 
@@ -42,15 +41,35 @@ h6 {
 	text-align: center;
 }
 
+h1 {
+	font-family: 'Megrim', cursive;
+	font-size: 5em;
+	padding-left: 10px;
+	border: 3px solid;
+  border-radius: 25px;
+  color: #cee3f8;
+}
+
+#title_logo {
+	border-radius: 25px;
+}
+
+#tagline {
+	margin-top: 10px;
+}
+
 #top {
-	background: #95e4e5;
+	margin-top: 30px;
+	background: #336699;
 	height: 100px;
-	padding-top: 10px;
-	cursor:pointer;
+	cursor: pointer;
+	border-radius: 25px;
+	width: 98%;
+	position: fixed;
 }
 #messages { 
 	list-style-type: none;
-	border-top: 350px; 
+	border-top: 50px; 
 	margin: 0; 
 	padding: 0;
 	max-height: 100%;
@@ -60,28 +79,35 @@ h6 {
 #messages li { 
 	padding: 5px 10px;
 }
+#sign_in_status {
+	z-index: 1;
+}
+
 #container {
+	padding-top: 136px;
 	height: 600px;
 	margin-left: 12%;
 	margin-right: 12%;
+
 }
 #messages li:nth-child(odd) { 
-	background: #95e4e5; 
+	background: #f5f5f5; 
 }
 #messages li:nth-child(even) { 
-	background: #cce2e2; 
+	background: #c6c6c6; 
+}
+
+#send_button {
+	background-color: white;
 }
 
 .hoverbutton {
 	background-color: #88e0ea;
 }
-/*.user li:nth-child(odd) {
-	color: #F76F00; /*ORANGE
-}*/
 
 .user {
 	font-size: 1.3em;
-	color: #F76F00; /*BLUE*/
+	color: #6d6b6b;
 	float:left;
 }
 
@@ -89,7 +115,6 @@ h6 {
 	font-size: 1.2em;
 	color: black;
 	padding-left: 10px;
-	/*max-width: 1000px;*/
 	word-wrap:break-word;
 }
 

@@ -1,10 +1,16 @@
-<h1>About</h1>
+<div id="top">
+  <span id="title_logo">
+    <h1>Yaps.co</h1>
+  </span> 
+</div>
 
-<p><em>YAPS</em> is a webchat site built with a goal of bringing Redditors together.</p>
+<div id="tagline">
+<p>A webchat site built with a goal of bringing Redditors together.</p>
+</div>
 
 <div id="user_box">
 	<% unless current_user %>
-	<button id="reddit_login">Login with Reddit</button>
+	<button id="reddit_login">Login with Reddit</button>   or   
 	
 	<input type="text" id="username" autofocus=true placeholder="Choose a handle">
 	<% end %>

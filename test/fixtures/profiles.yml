@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  created: MyString
+  gold_creddits: MyString
+  link_karma: MyString
+  comment_karma: MyString
+  over_18: false
+  is_gold: false
+  is_mod: false
+  user_id: MyString
+
+two:
+  name: MyString
+  created: MyString
+  gold_creddits: MyString
+  link_karma: MyString
+  comment_karma: MyString
+  over_18: false
+  is_gold: false
+  is_mod: false
+  user_id: MyString
