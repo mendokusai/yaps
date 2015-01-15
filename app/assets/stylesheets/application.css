@@ -22,10 +22,22 @@
 body {
 	background: #e1f2f4;
 }
-/*body { font: 13px Helvetica, Arial; }*/
-form { /*background: #95e4e5;*/ padding: 30px; position: fixed; left: 250px; top: 0px; width: 75%; }
-form input { border: 0; padding: 10px; width: 80%; margin-right: .5%; }
-/*form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }*/
+
+form { 
+	padding: 30px; 
+	position: fixed; 
+	left: 250px; 
+	top: 0px; 
+	width: 75%; 
+}
+
+form input { 
+	border: 0; 
+	padding: 10px; 
+	width: 80%; 
+	margin-right: .5%; 
+}
+
 #top {
 	background: #95e4e5;
 	height: 100px;
@@ -36,16 +48,16 @@ form input { border: 0; padding: 10px; width: 80%; margin-right: .5%; }
 	list-style-type: none;
 	border-top: 350px; 
 	margin: 0; 
-	padding: 0; 
+	padding: 0;
+	max-height: 100%;
+	overflow: scroll;
 }
+
 #messages li { 
 	padding: 5px 10px;
-
 }
 #container {
-
-	height: 500px;
-	background-color: #cce2e2;
+	height: 600px;
 	margin-left: 12%;
 	margin-right: 12%;
 }
