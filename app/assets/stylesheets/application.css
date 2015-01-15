@@ -38,6 +38,10 @@ form input {
 	margin-right: .5%; 
 }
 
+h6 {
+	text-align: center;
+}
+
 #top {
 	background: #95e4e5;
 	height: 100px;

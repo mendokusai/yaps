@@ -4,15 +4,20 @@
   <form action="">
     <input id="m" autofocus=true autocomplete="off" /><button>Send</button>
   </form>
+  <div id="roomname"><h6>Lobby</h6></div>
   <ul id="messages"></ul>
 </div>
 <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 
 <script>
-$(function(){
-  var username;
+// $(function(){
+  var username, change_room;
   var socket = io("<%= Rails.configuration.socket_url %>");
+
+  socket.on('all users', function(array){
+    console.log(array);
+  });
 
 
 
@@ -46,6 +51,7 @@ $(function(){
     return img === null ? "none" : img;
   }
 
+  
   function get_url(message){
     var url = message.match(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/);
     if ( url ) {
@@ -57,32 +63,53 @@ $(function(){
     return url === null ? "none" : url;
   }
 
+  socket.on('room details', function(msg){
+    $('#roomname h6').text(msg.room);
+  });
+
   $('form').submit(function(){
     var message = $('#m').val();
 
     var url = get_url(message);
     var image = get_image(message);
 
-    var date = new Date();
-    var time = date.toLocaleTimeString();
-
-    
-    var hash = {
-      date: date,
-      name: username,
-      text: message,
-      stamp: time,
-      url: url,
-      image: image
-    };
-  // console.log(hash);
-  socket.emit('chat message', hash);
+    // debugger;
+    // var joinroom = joinroom(message);
+    var match = message.match("/joinroom");
+    if (match){
+      var roomname = message.replace("/joinroom ", "");
+      change_room = {
+        room: roomname,
+        name: username
+      }
+      socket.emit('change room', change_room);
+    } else {
+      var date = new Date();
+      var time = date.toLocaleTimeString();
+      
+      var hash = {
+        date: date,
+        name: username,
+        text: message,
+        stamp: time,
+        url: url,
+        image: image
+      };
+      if (window.socket_room) {
+        hash.socket_room = window.socket_room;
+        socket.emit('chat message in room', hash);
+      } else {
+        socket.emit('chat message', hash);
+      }
+    }
     $('#m').val("");
     return false;  
   });
 
-  socket.on('all users', function(array){
-    console.log(array);
+  
+  socket.on('chat message room change', function (data) {
+    console.log(data)
+    window.socket_room = data.socket_room;
   });
 
   socket.on('chat message', function(msg){
@@ -117,12 +144,12 @@ $(function(){
 
 
   });
-
+  //passes deets of leaving person
   socket.on("user disconnected", function (data) {
     console.log(data);
 
   });
-})
+// })
 </script>
 
 
