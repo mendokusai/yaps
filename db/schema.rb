@@ -11,7 +11,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150112065029) do
+ActiveRecord::Schema.define(version: 20150114231953) do
+
+  create_table "interests", force: :cascade do |t|
+    t.string   "subreddits"
+    t.string   "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "profiles", force: :cascade do |t|
+    t.string   "name"
+    t.string   "created"
+    t.string   "gold_creddits"
+    t.string   "link_karma"
+    t.string   "comment_karma"
+    t.boolean  "over_18"
+    t.boolean  "is_gold"
+    t.boolean  "is_mod"
+    t.string   "user_id"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
 
   create_table "users", force: :cascade do |t|
     t.string   "provider"
