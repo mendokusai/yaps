@@ -11,13 +11,15 @@ $(function(){
 	});
 
 	$('#username').keypress(function(){
-		username = $('#username').val();
-		if (currentUser != undefined){
-			username = currentUser.name;
-		} else if (username.length == 0){
-			username = "Anonymous"
-		};
-		window.location = "/welcome/index?name="+ username;
+		if (event.keyCode == 13) {
+			username = $('#username').val();
+			if (currentUser != undefined){
+				username = currentUser.name;
+			} else if (username.length == 0){
+				username = "Anonymous"
+			};
+			window.location = "/welcome/index?name="+ username;
+		};	
 	});
 
 	$('#submit_username').on('click', function(){
