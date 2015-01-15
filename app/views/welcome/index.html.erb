@@ -1,13 +1,5 @@
 <div id="top"><h1>Yaps.co</h1></div>
-
-
-<!-- <input type="text" width="50" autofocus="true" id="send_text" placeholder="Messages to send."><button id="send_button">Click</button>
-<h4>Messages:</h4>
-<ul>
-<div id="messages">
-</div>
-</ul> -->
-
+<div class="people"></div>
 <div id="container">
   <form action="">
     <input id="m" autofocus=true autocomplete="off" /><button>Send</button>
@@ -16,93 +8,121 @@
 </div>
 <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-<!-- <script src="http://socket.io/socket.io.js"></script> -->
 
 <script>
-$('#top').on('click', function(){
-  window.location = "/";
-});
-
-function getParameterByName(name) {
-  name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-  var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-      results = regex.exec(location.search);
-  return results === null ? "Anonymous" : decodeURIComponent(results[1].replace(/\+/g, " "));
-}
-
-function get_image(message){
-  var img = message.match(/^https?:\/\/(www)?(.+)\/(.+)\.(png|jpg|gif)\??(.*)$/);
-  if (img){
-    img = img[0];
-    if (img[0] != "h"){
-      img = "http://" + img;
-    };
-  };
-  return img === null ? "none" : img;
-}
-
-function get_url(message){
-  var url = message.match(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/);
-  if ( url ) {
-    url = url[0];
-    if (url[0] != "h"){
-      url = "http://" + url;
-    };
-  }
-  return url === null ? "none" : url;
-}
-
-var socket = io("<%= Rails.configuration.socket_url %>");
-$('form').submit(function(){
-  var message = $('#m').val();
-
-  var url = get_url(message);
-  var image = get_image(message);
-
-  var date = new Date();
-  var time = date.toLocaleTimeString();
+$(function(){
   var username;
+  var socket = io("<%= Rails.configuration.socket_url %>");
+
+
+
   if (currentUser != undefined){
     username = currentUser.name;
   } else{
    username = getParameterByName('name');
-   console.log(url);
-   console.log(image);
   };
-  var hash = {
-    date: date,
-    name: username,
-    text: message,
-    stamp: time,
-    url: url,
-    image: image
-  };
+  var data = {username: username};
+  socket.emit('user config', data);
+
+  $('#top').on('click', function(){
+    window.location = "/";
+  });
+
+  function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "Anonymous" : decodeURIComponent(results[1].replace(/\+/g, " "));
+  }
+
+  function get_image(message){
+    var img = message.match(/^https?:\/\/(www)?(.+)\/(.+)\.(png|jpg|gif)\??(.*)$/);
+    if (img){
+      img = img[0];
+      if (img[0] != "h"){
+        img = "http://" + img;
+      };
+    };
+    return img === null ? "none" : img;
+  }
+
+  function get_url(message){
+    var url = message.match(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/);
+    if ( url ) {
+      url = url[0];
+      if (url[0] != "h"){
+        url = "http://" + url;
+      };
+    }
+    return url === null ? "none" : url;
+  }
+
+  $('form').submit(function(){
+    var message = $('#m').val();
+
+    var url = get_url(message);
+    var image = get_image(message);
+
+    var date = new Date();
+    var time = date.toLocaleTimeString();
+
+    
+    var hash = {
+      date: date,
+      name: username,
+      text: message,
+      stamp: time,
+      url: url,
+      image: image
+    };
   // console.log(hash);
   socket.emit('chat message', hash);
-  $('#m').val("");
-  return false;  
-});
+    $('#m').val("");
+    return false;  
+  });
 
-socket.on('chat message', function(msg){
-  var processed_user, processed_msg, processed_stamp, print_message, processed_image, processed_link;
+  socket.on('all users', function(array){
+    console.log(array);
+  });
 
-  processed_user = '<p><span class="user">' + msg.name + '</span>';
-  processed_msg = '<span class="message">' + msg.text + '</span>';
-  processed_stamp = '<span class="time"><em>@' + msg.stamp + '</em></span></p>';
-  
-  if (msg.url != "none"){
-    processed_link = '<span class="message"><a href="' + msg.url + '" target="_blank">link</a></span>';
-  } else{
-    processed_link = "";
-  };
-  print_message = processed_user + ": " + processed_msg + " " + processed_link + " " + processed_stamp;
-  
-  if (msg.image != "none"){
-    print_message = print_message + "<img class='img' src='" + msg.image +"' max-width='100%'>";
-  };
-  $('#messages').append($('<li>').html(print_message));
-});
+  socket.on('chat message', function(msg){
+    var processed_user, processed_msg, processed_stamp, print_message, processed_image, processed_link;
 
+    processed_user = '<p><span class="user">' + msg.name + '</span>';
+    processed_msg = '<span class="message">' + msg.text + '</span>';
+    processed_stamp = '<span class="time"><em>@' + msg.stamp + '</em></span></p>';
+    
+    if (msg.url != "none"){
+      processed_link = '<span class="message"><a href="' + msg.url + '" target="_blank">link</a></span>';
+    } else{
+      processed_link = "";
+    };
+    print_message = processed_user + ": " + processed_msg + " " + processed_link + " " + processed_stamp;
+    
+    if (msg.image != "none"){
+      print_message = print_message + "<img class='img' src='" + msg.image +"' max-width='100%'>";
+    };
+    $('#messages').prepend($('<li>').html(print_message));
+  });
+
+  socket.on('user config', function (data) {
+    // debugger;
+    console.log("USER CONFIGURATION CALLED");
+    var currentHtml = $("div.people").html();
+
+
+    if ( $("#" + data.name).length == 0 ) {
+      $("div.people").html(currentHtml += "<p id='" + data.name + "'>" + data.name + "</p>");
+    }
+
+
+  });
+
+  socket.on("user disconnected", function (data) {
+    console.log(data);
+
+  });
+})
 </script>
 
 
