@@ -13,18 +13,26 @@
 <script>
 // $(function(){
   var username, change_room;
+
+
+  window.userName = $("span.current_user").text() || "Anonymous";
+
+  // console.log("Current User: ", window.userName);
+
   var socket = io("<%= Rails.configuration.socket_url %>");
 
   socket.on('all users', function(array){
-    console.log(array);
+    // console.log(array);
   });
 
-
+  $.get("/return_reddit", function (data) {
+    window.profile = data;
+  });
 
   if (currentUser != undefined){
     username = currentUser.name;
   } else{
-   username = getParameterByName('name');
+    username = getParameterByName('name');
   };
   var data = {username: username};
   socket.emit('user config', data);

@@ -1,5 +1,15 @@
 class SessionsController < ApplicationController
   
+  def return_reddit_details
+    @data = {}
+    @data["subreddits"] = current_user.interests[0]["subreddits"]
+    @data["profile"]    = current_user.profile
+
+    respond_to do |format|
+      format.json { render :json => @data }
+    end
+  end
+
   def create
     @user = User.find_or_create_from_auth_hash(auth_hash)
     session[:user_id] = @user.id

@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   get 'welcome/about'
 
   get '/logout', to: 'sessions#logout_session'
+  get '/return_reddit', to: 'sessions#return_reddit_details'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
