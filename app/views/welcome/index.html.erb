@@ -12,23 +12,7 @@
 
 <script>
 // $(function(){
-  var username, change_room;
-
-
-  window.userName = $("span.current_user").text() || "Anonymous";
-
-  // console.log("Current User: ", window.userName);
-
-  var socket = io("<%= Rails.configuration.socket_url %>");
-
-  socket.on('all users', function(array){
-    // console.log(array);
-  });
-
-  $.get("/return_reddit", function (data) {
-    window.profile = data;
-  });
-
+  var username, change_room, user_rooms;
   if (currentUser != undefined){
     username = currentUser.name;
   } else{
@@ -39,6 +23,27 @@
       username.join();
     };
   };
+
+  window.socket_room = "lobby";
+  window.userName = $("span.current_user").text() || "Anonymous";
+
+  // console.log("Current User: ", window.userName);
+
+  var socket = io("<%= Rails.configuration.socket_url %>");
+
+  socket.on('all users', function(allUsers){
+    // console.log(array);
+  });
+
+  if (currentUser){
+    $.get("/return_reddit", function (data) {    
+      window.profile = data;
+      user_rooms = window.profile.subreddits.map(function(el){
+        return el.display_name;
+      });
+    });
+  };
+  
   var data = {username: username};
   socket.emit('user config', data);
 
@@ -88,6 +93,24 @@
 
     // debugger;
     // var joinroom = joinroom(message);
+    var helper = message.match('/help');
+    if (helper){
+      $('#messages').prepend($('<li>').html('Type "/listrooms" to list your subreddits<br>Type "/joinroom roomname" to join a room. <br>You can add links, gifs, or images to chat messages.<br>Typing "/help" brings up this list.'));
+    }
+
+    var list_rooms = message.match('/listrooms');
+    if (list_rooms){
+      if (currentUser){
+        $.each(user_rooms, function(i, room){
+        $('#messages').prepend($('<span>').html(" | " + room + " | ")); 
+        });
+        $('#messages').prepend("<li>");
+        $('#messages').prepend($('<li>').html('Here are your room options. use "/joinroom roomname" to join. '));
+      }else {
+      $('#messages').prepend($('<li>').html("You're not signed in to Reddit. Sign in to Reddit to see Reddit Subreddit Rooms."));
+      };
+    };
+
     var match = message.match("/joinroom");
     if (match){
       var roomname = message.replace("/joinroom ", "");
@@ -108,10 +131,12 @@
         url: url,
         image: image
       };
-      if (window.socket_room) {
+    
+      if (window.socket_room !== "lobby") {
         hash.socket_room = window.socket_room;
         socket.emit('chat message in room', hash);
       } else {
+        hash.socket_room = window.socket_room;
         socket.emit('chat message', hash);
       }
     }
@@ -121,33 +146,32 @@
 
   
   socket.on('chat message room change', function (data) {
-    console.log(data)
     window.socket_room = data.socket_room;
   });
 
   socket.on('chat message', function(msg){
-    var processed_user, processed_msg, processed_stamp, print_message, processed_image, processed_link;
+    if ( msg.socket_room === window.socket_room ) {
+      var processed_user, processed_msg, processed_stamp, print_message, processed_image, processed_link;
 
-    processed_user = '<p><span class="user">' + msg.name + '</span>';
-    processed_msg = '<span class="message">' + msg.text + '</span>';
-    processed_stamp = '<span class="time"><em>@' + msg.stamp + '</em></span></p>';
-    
-    if (msg.url != "none"){
-      processed_link = '<span class="message"><a href="' + msg.url + '" target="_blank">link</a></span>';
-    } else{
-      processed_link = "";
-    };
-    print_message = processed_user + ": " + processed_msg + " " + processed_link + " " + processed_stamp;
-    
-    if (msg.image != "none"){
-      print_message = print_message + "<img class='img' src='" + msg.image +"' max-width='100%'>";
-    };
-    $('#messages').prepend($('<li>').html(print_message));
+      processed_user = '<p><span class="user">' + msg.name + '</span>';
+      processed_msg = '<span class="message">' + msg.text + '</span>';
+      processed_stamp = '<span class="time"><em>@' + msg.stamp + '</em></span></p>';
+      
+      if (msg.url != "none"){
+        processed_link = '<span class="message"><a href="' + msg.url + '" target="_blank">link</a></span>';
+      } else{
+        processed_link = "";
+      };
+      print_message = processed_user + ": " + processed_msg + " " + processed_link + " " + processed_stamp;
+      
+      if (msg.image != "none"){
+        print_message = print_message + "<img class='img' src='" + msg.image +"' max-width='100%'>";
+      };
+      $('#messages').prepend($('<li>').html(print_message));
+    }
   });
 
   socket.on('user config', function (data) {
-    // debugger;
-    console.log("USER CONFIGURATION CALLED");
     var currentHtml = $("div.people").html();
 
 
@@ -159,7 +183,6 @@
   });
   //passes deets of leaving person
   socket.on("user disconnected", function (data) {
-    console.log(data);
 
   });
 // })
