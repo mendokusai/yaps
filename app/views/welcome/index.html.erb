@@ -4,6 +4,7 @@
   <form action="">
     <input id="m" autofocus=true autocomplete="off" /><button id="send_button">Send</button>
   </form>
+  <button id="random_chat">Random Chat</button>
   <div id="roomname"><h6>Lobby</h6></div>
   <ul id="messages"></ul>
 </div>
@@ -11,6 +12,7 @@
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 
 <script>
+
 // $(function(){
   var username, change_room, user_rooms;
   if (currentUser != undefined){
@@ -23,6 +25,7 @@
       username.join();
     };
   };
+  var data = {username: username};
 
   window.socket_room = "lobby";
   window.userName = $("span.current_user").text() || "Anonymous";
@@ -30,6 +33,16 @@
   // console.log("Current User: ", window.userName);
 
   var socket = io("<%= Rails.configuration.socket_url %>");
+
+  $('#random_chat').on('click', function(){
+    socket.emit('random chat', data);
+    $('#messages').empty();
+    $('#roomname h6').html("Random Room!");
+  });
+
+  socket.on('random chat', function(message){
+    console.log(message);
+  });
 
   socket.on('all users', function(allUsers){
     // console.log(array);
@@ -44,7 +57,7 @@
     });
   };
   
-  var data = {username: username};
+  
   socket.emit('user config', data);
 
   $('#top').on('click', function(){
@@ -81,8 +94,9 @@
     return url === null ? "none" : url;
   }
 
-  socket.on('room details', function(msg){
-    $('#roomname h6').text(msg.room);
+  socket.on('room details', function(change_room){
+    $('#messages').empty();
+    $('#roomname h6').text(change_room.room);
   });
 
   $('form').submit(function(){
