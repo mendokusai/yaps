@@ -15,6 +15,7 @@
 
 // $(function(){
   var username, change_room, user_rooms;
+
   if (currentUser != undefined){
     username = currentUser.name;
   } else{
@@ -30,8 +31,6 @@
   window.socket_room = "lobby";
   window.userName = $("span.current_user").text() || "Anonymous";
 
-  // console.log("Current User: ", window.userName);
-
   var socket = io("<%= Rails.configuration.socket_url %>");
 
   $('#random_chat').on('click', function(){
@@ -45,7 +44,6 @@
   });
 
   socket.on('all users', function(allUsers){
-    // console.log(array);
   });
 
   if (currentUser){
@@ -59,6 +57,7 @@
   
   
   socket.emit('user config', data);
+  console.log("Room?", window.socket_room);
 
   $('#top').on('click', function(){
     window.location = "/";
@@ -97,6 +96,7 @@
   socket.on('room details', function(change_room){
     $('#messages').empty();
     $('#roomname h6').text(change_room.room);
+    window.socket_room = change_room.room;
   });
 
   $('form').submit(function(){
@@ -129,6 +129,7 @@
     if (match){
       var roomname = message.replace("/joinroom ", "");
       change_room = {
+        last_room: window.socket_room,
         room: roomname,
         name: username
       }
@@ -159,8 +160,10 @@
   });
 
   
-  socket.on('chat message room change', function (data) {
-    window.socket_room = data.socket_room;
+  socket.on('chat message room change', function (msg) {
+    $('#messages').prepend($('<li>').html(
+      '<span class="message">YapsBot: ' + msg.name + " " + msg.text + " " + '</span><span class="time">' + msg.stamp + '</span>'
+    ));
   });
 
   socket.on('chat message', function(msg){
