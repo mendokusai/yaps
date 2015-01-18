@@ -17,4 +17,4 @@
 /tmp
 
 # Ignore the API keys
-# /config/secrets.yml
+/config/secrets.yml
