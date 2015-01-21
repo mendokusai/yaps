@@ -1,13 +1,27 @@
-
-<div class="people"></div>
 <div id="container">
-  <form action="">
-    <input id="m" autofocus=true autocomplete="off" /><button id="send_button">Send</button>
-  </form>
-  <button id="random_chat">Random Chat</button>
-  <div id="roomname"><h6>Lobby</h6></div>
+  <nav class='navbar navbar-default navbar-fixed-top'>
+    <div class='container'>
+      <div class="navbar-header">
+        <div class="navbar-brand" href="/">
+          <!-- <a class="navbar-brand" href="/"> <img alt="Yaps.co"></a> --><span class="navbar-brand"><a href="/"><p class="navbar-brand">Yaps.co</p></a></span>
+        </div>
+      </div>
+      <div class="input-group input-group-lg">
+        <span class="input-group-addon"><span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span></span>
+          
+          <input type="text" id="m" class="form-control" autofocus=true autocomplete="yes" placeholder="yap  yap  yap" aria-describedby="sizing-addon1">
+      
+        <span class="input-group-btn">
+          <button id="random_chat" class="btn btn-primary" type="button">Random Chat</button>
+        </span>
+      </div>
+    </div>
+  </nav>
+  <div id="roomname"><h3>Lobby</h3></div>
   <ul id="messages"></ul>
+
 </div>
+
 <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 
@@ -99,7 +113,8 @@
     window.socket_room = change_room.room;
   });
 
-  $('form').submit(function(){
+$('#m').keypress(function(){
+  if (event.keyCode == 13) {
     var message = $('#m').val();
 
     var url = get_url(message);
@@ -156,7 +171,8 @@
       }
     }
     $('#m').val("");
-    return false;  
+    return false; 
+    }; 
   });
 
   

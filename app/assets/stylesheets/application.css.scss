@@ -1,19 +1,7 @@
-/*
- * This is a manifest file that'll be compiled into application.css, which will include all the files
- * listed below.
- *
- * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
- * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
- *
- * You're free to add application-wide styles to this file and they'll appear at the bottom of the
- * compiled file so the styles you add here take precedence over styles defined in any styles
- * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
- * file per style scope.
- *
- *= require_tree .
- *= require_self
- */
 
+
+@import "bootstrap-sprockets";
+@import "bootstrap";
 
 * { 
 	box-sizing: border-box; 
@@ -22,6 +10,17 @@ body {
 	background: #eff7ff;
 }
 
+#title_logo h1{
+	font-family: 'Megrim', sans-serif;
+	font-size: 4.4em;
+	color: #eff7ff;
+}
+#container {
+	height: max-height;
+	margin-top: 30px;
+	padding-left: 12%;
+	padding-right: 12%;
+}
 form { 
 	padding: 60px; 
 	position: fixed; 
@@ -38,21 +37,36 @@ form input {
 	margin-right: .5%; 
 }
 
-h6 {
+h3 {
 	text-align: center;
+	padding-bottom: 10px;
 }
 
-h1 {
-	font-family: 'Megrim', cursive;
-	font-size: 5em;
-	padding-left: 10px;
-	border: 3px solid;
-  border-radius: 25px;
-  color: #cee3f8;
+#container p {
+	padding-top: 5px;
+	font-family: 'Megrim', sans-serif;
+	font-size: 2.5em;
+	padding-left: 1px;
+	/*border: 3px solid;
+  border-radius: 25px;*/
+  color: #2796e5;
 }
 
+.input-lg, .input-group-lg > .form-control, .input-group-lg > .input-group-addon, .input-group-lg > .input-group-btn > .btn, .form-group-lg .form-control{
+	height: 60px;
+}
+
+.navbar-brand {
+	padding: 5px 5px;
+	height: 60px;
+}
+.input-group-lg > .form-control {
+	height: 60px;
+}
 #title_logo {
 	border-radius: 25px;
+	display: inline-block;
+
 }
 
 #tagline {
@@ -74,7 +88,7 @@ h1 {
 }
 #messages { 
 	list-style-type: none;
-	border-top: 50px; 
+	border-top: 30px; 
 	margin: 0; 
 	padding: 0;
 	max-height: 100%;
@@ -90,13 +104,20 @@ h1 {
 	width: 100%;
 }
 
-#container {
-	padding-top: 136px;
-	height: 600px;
-	margin-left: 12%;
-	margin-right: 12%;
-
+#messages p {
+	font-family: 'Open Sans', sans-serif;
+	font-size: 1em;
 }
+
+#span {
+	font-family: 'Open Sans', sans-serif;
+	font-size: 1em;
+}
+
+#roomname {
+	padding-top: 3px;
+}
+
 #messages li:nth-child(odd) { 
 	background: #f5f5f5; 
 }
@@ -119,7 +140,7 @@ h1 {
 }
 
 .message {
-	font-size: 1.2em;
+	font-size: 1em;
 	color: black;
 	padding-left: 10px;
 	word-wrap:break-word;
@@ -134,4 +155,20 @@ h1 {
 .img {
 	margin: auto 0;
 	max-width: 100%;
+}
+
+@media (max-width: 500px) {
+   .message{
+   font-size: 1em;
+   }
+   #container {
+	padding-top: 10px;
+	height: max-height;
+	margin-left: 3%;
+	margin-right: 13%;
+	}
+	.navbar-brand{
+	padding-left: 40px;
+	}
+
 }
