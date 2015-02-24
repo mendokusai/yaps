@@ -3,7 +3,7 @@
     <div class='container'>
       <div class="navbar-header">
         <div class="navbar-brand" href="/">
-          <!-- <a class="navbar-brand" href="/"> <img alt="Yaps.co"></a> --><span class="navbar-brand"><a href="/"><p class="navbar-brand">Yaps.co</p></a></span>
+          <!-- <a class="navbar-brand" href="/"> <img alt="Yaps.co"></a> --><span class="navbar-brand"><a href="/"><p id="logo" class="navbar-brand">Yaps.co</p></a></span>
         </div>
       </div>
       <div class="input-group input-group-lg">
@@ -12,7 +12,11 @@
           <input type="text" id="m" class="form-control" autofocus=true autocomplete="yes" placeholder="yap  yap  yap" aria-describedby="sizing-addon1">
       
         <span class="input-group-btn">
-          <button id="random_chat" class="btn btn-primary" type="button">Random Chat</button>
+          <button id="message_submit" class="btn btn-lg btn-primary" type="button">Yap!</button>
+          <!-- <span id='spacer'></span> -->
+        </span>
+         <span class="input-group-btn">
+        <button id="random_chat" class="btn btn-sm btn-danger" type="button">Random Chat</button>
         </span>
       </div>
     </div>
@@ -112,6 +116,66 @@
     $('#roomname h6').text(change_room.room);
     window.socket_room = change_room.room;
   });
+
+
+$('#message_submit').on('click', function(){
+  var message = $('#m').val();
+  if (message.length > 0){
+    var url = get_url(message);
+    var image = get_image(message);
+
+    var helper = message.match('/help');
+    if (helper){
+      $('#messages').prepend($('<li>').html('Type "/listrooms" to list your subreddits<br>Type "/joinroom roomname" to join a room. <br>You can add links, gifs, or images to chat messages.<br>Typing "/help" brings up this list.'));
+    }
+
+    var list_rooms = message.match('/listrooms');
+    if (list_rooms){
+      if (currentUser){
+        $.each(user_rooms, function(i, room){
+        $('#messages').prepend($('<span>').html(" | " + room + " | ")); 
+        });
+        $('#messages').prepend("<li>");
+        $('#messages').prepend($('<li>').html('Here are your room options. use "/joinroom roomname" to join. '));
+      }else {
+      $('#messages').prepend($('<li>').html("You're not signed in to Reddit. Sign in to Reddit to see Reddit Subreddit Rooms."));
+      };
+    };
+
+    var match = message.match("/joinroom");
+    if (match){
+      var roomname = message.replace("/joinroom ", "");
+      change_room = {
+        last_room: window.socket_room,
+        room: roomname,
+        name: username
+      }
+      socket.emit('change room', change_room);
+    } else {
+      var date = new Date();
+      var time = date.toLocaleTimeString();
+      
+      var hash = {
+        date: date,
+        name: username,
+        text: message,
+        stamp: time,
+        url: url,
+        image: image
+      };
+    
+      if (window.socket_room !== "lobby") {
+        hash.socket_room = window.socket_room;
+        socket.emit('chat message in room', hash);
+      } else {
+        hash.socket_room = window.socket_room;
+        socket.emit('chat message', hash);
+      }
+    }
+    $('#m').val("");
+    return false; 
+  }
+});
 
 $('#m').keypress(function(){
   if (event.keyCode == 13) {
