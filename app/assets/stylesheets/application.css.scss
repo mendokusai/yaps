@@ -14,7 +14,25 @@ body {
 	font-family: 'Megrim', sans-serif;
 	font-size: 4.4em;
 	color: #eff7ff;
+	padding-left: 0.5em;
 }
+
+#name h1 {
+	margin-top: -0.5em;
+	margin-left: 2%;
+}
+
+#name h3 {
+	margin-top: -2.3em;
+	margin-left: 1.5em;
+}
+
+#user_name {
+	margin-top: 0.2em;
+	margin-right: 2em;
+}
+
+
 #container {
 	height: max-height;
 	margin-top: 30px;
@@ -63,17 +81,13 @@ h3 {
 .input-group-lg > .form-control {
 	height: 60px;
 }
-#title_logo {
-	border-radius: 25px;
-	display: inline-block;
-
-}
 
 #tagline {
 	margin-top: 10px;
 }
 
 #top {
+	font-family: 'Megrim', sans-serif;
 	/*margin-top: 30px;*/
 	background: #336699;
 	height: 100px;
@@ -103,6 +117,9 @@ h3 {
 	height: 30px;
 	width: 100%;
 }
+h3 {
+	font-family: 'Open Sans', sans-serif;
+}
 
 #messages p {
 	font-family: 'Open Sans', sans-serif;
@@ -129,10 +146,6 @@ h3 {
 	background-color: white;
 }
 
-.hoverbutton {
-	background-color: #88e0ea;
-}
-
 .user {
 	font-size: 1.3em;
 	color: #6d6b6b;
@@ -156,10 +169,21 @@ h3 {
 	margin: auto 0;
 	max-width: 100%;
 }
+@media (max-width: 750) {
+	#top h1 {
+		margin-top: 0px;
+		padding-bottom: 30px;
+	}
+}
+
 
 @media (max-width: 500px) {
    .message{
    font-size: 1em;
+   }
+   #top h1 {
+   	margin-top: -20px;
+   	padding-bottom: 50px;
    }
    #container {
 	padding-top: 10px;
@@ -169,6 +193,17 @@ h3 {
 	}
 	.navbar-brand{
 	padding-left: 40px;
+	}
+	#user_box {
+	padding-top: 8em;
+	}
+	#reddit_login {
+		margin: 0 auto;
+		margin-bottom: 20px;
+		padding: 20px 20px 30px 20px;
+	}
+	.glyphicon {
+		padding: 20px 20px 40px 20px;
 	}
 
 }

@@ -1,21 +1,19 @@
-<div id="tagline">
-	<p>A webchat site built with a goal of bringing Redditors together.</p>
+<div id="top" class="jumbotron">
+    <div id='name'><h1>Yaps.co</h1>
+    <h3>A webchat site to bring Redditors together.</h3></div>
 </div>
 
-<div id="top">
-  <span id="title_logo">
-    <h1>Yaps.co</h1> 
-  </span> 
-</div>
-
-<div id="user_box">
+<center><div id="user_box">
 	<% unless current_user %>
-	<button id="reddit_login">Login with Reddit</button>   or   
-	
-	<input type="text" id="username" autofocus=true placeholder="Choose a handle" maxlength="10">
+	<button type="button" id="reddit_login"class="btn btn-primary btn-lg">Login with Reddit</button>
+  <button type="button" id="no_login"class="btn btn btn-lg">Limited Access</button><br>   
+	<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+	<input type="text" class="form-control" autofocus=true placeholder="Choose a handle" maxlength="10">
+  <% else %>
+  <button type='button' id='logged_in_enter' class='btn btn-primary btn-lg'>Let's start!</button>
 	<% end %>
 
-</div>
+</div></center>
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

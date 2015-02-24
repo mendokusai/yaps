@@ -10,8 +10,18 @@ $(function(){
 		window.location = "/auth/reddit";
 	});
 
-	$('#username').keypress(function(){
+	$('#logged_in_enter').on('click', function(){
+		if (currentUser) {
+			username = currentUser.name;
+		} else {
+			username = "Anonymous"
+		}
+		window.location ="/welcome/index?name=" + username;
+	});
+
+	$('#username').keypress(function(event){
 		if (event.keyCode == 13) {
+			console.log ('perft');
 			username = $('#username').val();
 			if (currentUser != undefined){
 				username = currentUser.name;
