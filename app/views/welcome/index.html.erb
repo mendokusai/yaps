@@ -22,8 +22,11 @@
     </div>
   </nav>
   <div id="roomname"><h3>Lobby</h3></div>
-  <ul id="messages"></ul>
-
+  <div id='main'>
+  <div id='direct_messages'><ul id='rooms'></ul></div>
+  <div id='message_box'><ul id="messages"></ul></div>
+  <div id='in_room'><ul id='people'></ul></div>
+  </div>
 </div>
 
 <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
@@ -32,7 +35,7 @@
 <script>
 
 // $(function(){
-  var username, change_room, user_rooms;
+  var username, change_room, user_rooms, room_people;
 
   if (currentUser != undefined){
     username = currentUser.name;
@@ -62,6 +65,7 @@
   });
 
   socket.on('all users', function(allUsers){
+    console.log(allUsers);
   });
 
   if (currentUser){
@@ -180,8 +184,8 @@ $('#message_submit').on('click', function(){
 $('#m').keypress(function(){
   if (event.keyCode == 13) {
     var message = $('#m').val();
-
-    var url = get_url(message);
+    if (message.length > 0){
+      var url = get_url(message);
     var image = get_image(message);
 
     var helper = message.match('/help');
@@ -234,8 +238,9 @@ $('#m').keypress(function(){
     }
     $('#m').val("");
     return false; 
-    }; 
-  });
+    };
+  }; 
+});
 
   
   socket.on('chat message room change', function (msg) {
@@ -278,7 +283,10 @@ $('#m').keypress(function(){
   });
   //passes deets of leaving person
   socket.on("user disconnected", function (data) {
-
+    console.log(data);
+    $('#messages').prepend($('<li>').html(
+      '<span class="message">YapsBot: ' + data.name + " " + data.text + " " + '</span><span class="time">' + data.stamp + '</span>'
+    ));
   });
 // })
 </script>

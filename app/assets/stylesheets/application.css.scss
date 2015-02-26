@@ -36,8 +36,8 @@ body {
 #container {
 	height: max-height;
 	margin-top: 30px;
-	padding-left: 12%;
-	padding-right: 12%;
+	padding-left: 5%;
+	padding-right: 5%;
 }
 form { 
 	padding: 60px; 
@@ -78,6 +78,29 @@ h3 {
 	margin-left: 4em;
 }
 
+#direct_messages {
+	/* background: blue; */
+	/*margin-left: -7em;*/
+	width: 15%;
+	height: 36em;
+	border: 2px solid rgb(241, 241, 241);
+	float: left;
+	margin-right: 0.5em;
+}
+
+#message_box {
+	float: left;
+	width: 63%;
+}
+
+#in_room {
+	width: 19%;
+	height: 10em;
+	float: right;
+	border: 2px solid #f1f1f1;
+	margin-lef: -0.5em;
+}
+
 .input-lg, .input-group-lg > .form-control, .input-group-lg > .input-group-addon, .input-group-lg > .input-group-btn > .btn, .form-group-lg .form-control{
 	height: 60px;
 }
@@ -110,7 +133,7 @@ h3 {
 }
 #messages { 
 	list-style-type: none;
-	border-top: 30px; 
+	border-top: 30px;
 	margin: 0; 
 	padding: 0;
 	max-height: 100%;

@@ -14,7 +14,22 @@ $(function(){
 		if (currentUser) {
 			username = currentUser.name;
 		} else {
-			username = "Anonymous"
+			username = $('#username').val();
+			if (username.length == 0) {
+				username = "Anonymous"	
+			}
+		}
+		window.location ="/welcome/index?name=" + username;
+	});
+
+	$('#no_login').on('click', function(){
+		if (currentUser) {
+			username = currentUser.name;
+		} else {
+			username = $('#username').val();
+			if (username.length == 0) {
+				username = "Anonymous"	
+			}
 		}
 		window.location ="/welcome/index?name=" + username;
 	});
