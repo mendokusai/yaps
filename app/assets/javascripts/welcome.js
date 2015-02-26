@@ -2,7 +2,6 @@ var currentUser;
 
 $(function(){
 	var username;
-	// console.log(currentUser.name);
 	$('#submit_username').on('hover', function(){
 		$('#submit_username').toggleClass('.hoverbutton');
 	});
@@ -16,7 +15,8 @@ $(function(){
 		} else {
 			username = $('#username').val();
 			if (username.length == 0) {
-				username = "Anonymous"	
+				var random = Math.floor(Math.random() * 100 + 1);
+				username = "Anonymous" + "-" + random;		
 			}
 		}
 		window.location ="/welcome/index?name=" + username;
@@ -28,7 +28,8 @@ $(function(){
 		} else {
 			username = $('#username').val();
 			if (username.length == 0) {
-				username = "Anonymous"	
+				var random = Math.floor(Math.random() * 100 + 1);
+				username = "Anonymous" + "-" + random;	
 			}
 		}
 		window.location ="/welcome/index?name=" + username;
@@ -36,12 +37,12 @@ $(function(){
 
 	$('#username').keypress(function(event){
 		if (event.keyCode == 13) {
-			console.log ('perft');
 			username = $('#username').val();
 			if (currentUser != undefined){
 				username = currentUser.name;
 			} else if (username.length == 0){
-				username = "Anonymous"
+				var random = Math.floor(Math.random() * 100 + 1);
+				username = "Anonymous" + "-" + random;
 			};
 			window.location = "/welcome/index?name="+ username;
 		};	

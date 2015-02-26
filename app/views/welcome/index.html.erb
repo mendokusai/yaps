@@ -65,7 +65,12 @@
   });
 
   socket.on('all users', function(allUsers){
-    console.log(allUsers);
+    console.log("All users:", allUsers);
+    room_people = allUsers;
+    $('#people').empty();
+    for (i in room_people) {
+      $('#people').append('<li>' + room_people[i] + '</li>');
+    };
   });
 
   if (currentUser){
