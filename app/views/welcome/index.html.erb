@@ -68,8 +68,10 @@
     console.log("All users:", allUsers);
     room_people = allUsers;
     $('#people').empty();
-    for (i in room_people) {
-      $('#people').append('<li>' + room_people[i] + '</li>');
+    for (var username in room_people) {
+      if (room_people.hasOwnProperty(username))
+        var name = room_people[username].username;
+      $('#people').append('<li>' + name + '</li>');
     };
   });
 
