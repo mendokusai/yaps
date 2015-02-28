@@ -35,71 +35,36 @@
 <script>
 
 // $(function(){
-  var username, change_room, user_rooms = [], room_people;
-
-  if (currentUser != undefined){
-    username = currentUser.name;
-  } else{
-    username = getParameterByName('name');
-    if (username.length >20){
-      username.split("");
-      username.splice(0,20);
-      username.join();
-    };
-  };
+  
   var data = {username: username};
   
-  update_rooms_list = function(rooms){
+
+  function update_rooms_list(rooms){
     $('#rooms').empty();
     for (room in rooms){
       $('#rooms').append('<li id="' + rooms[room] + '">' + rooms[room] + '</li>');
     }
   }
 
-  window.socket_room = "lobby";
-  user_rooms.push(window.socket_room);
-  window.userName = $("span.current_user").text() || "Anonymous";
+  function chat_message_parser(msg){
+    var processed_user, processed_msg, processed_stamp, print_message, processed_image, processed_link;
 
-  var socket = io("<%= Rails.configuration.socket_url %>");
-  
-
-  $('#random_chat').on('click', function(){
-    socket.emit('random chat', data);
-    $('#messages').empty();
-    $('#roomname h6').html("Random Room!");
-  });
-
-  socket.on('random chat', function(message){
-  });
-
-  socket.on('all users', function(allUsers){
-    console.log(allUsers);
-    room_people = allUsers;
-
-    update_rooms_list(user_rooms);
+    processed_user = '<p><span class="user">' + msg.name + '</span>';
+    processed_msg = '<span class="message">' + msg.text + '</span>';
+    processed_stamp = '<span class="time"><em>@' + msg.stamp + '</em></span></p>';
     
-    $('#people').empty();
-    for (i in room_people) {
-      var name = room_people[i];
-      $('#people').append('<li id="' + name + '" class="active">' + name + '</li>');
+    if (msg.url != "none"){
+      processed_link = '<span class="message"><a href="' + msg.url + '" target="_blank">link</a></span>';
+    } else{
+      processed_link = "";
     };
-  });
-
-  if (currentUser){
-    $.get("/return_reddit", function (data) {    
-      window.profile = data;
-      user_rooms = window.profile.subreddits.map(function(el){
-        return el.display_name;
-      });
-    });
-  };
-  
-  
-  socket.emit('user config', data);
-
-  $('#top').on('click', function(){
-    window.location = "/";
-  });
+    print_message = processed_user + ": " + processed_msg + " " + processed_link + " " + processed_stamp;
+      
+    if (msg.image != "none"){
+      print_message = print_message + "<img class='img' src='" + msg.image +"' max-width='100%'>";
+    };
+    return print_message;
+  }
 
   function getParameterByName(name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -119,7 +84,6 @@
     return img === null ? "none" : img;
   }
 
-  
   function get_url(message){
     var url = message.match(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/);
     if ( url ) {
@@ -131,6 +95,73 @@
     return url === null ? "none" : url;
   }
 
+  var username, change_room, user_rooms = [], room_people, new_user = true;
+
+  if (currentUser != undefined){
+    username = currentUser.name;
+  } else{
+    username = getParameterByName('name');
+    if (username.length >20){
+      username.split("");
+      username.splice(0,20);
+      username.join();
+    };
+  };
+
+  if (currentUser){
+  $.get("/return_reddit", function (data) {    
+    window.profile = data;
+    user_rooms = window.profile.subreddits.map(function(el){
+      return el.display_name;
+    });
+  });
+};
+
+  window.socket_room = "lobby";
+  user_rooms.push(window.socket_room);
+  window.userName = $("span.current_user").text() || "Anonymous";
+
+  var socket = io("<%= Rails.configuration.socket_url %>");
+  
+
+  $('#random_chat').on('click', function(){
+    socket.emit('random chat', data);
+    $('#messages').empty();
+    $('#roomname h6').html("Random Room!");
+  });
+
+  socket.on('random chat', function(message){
+  });
+
+  socket.on('all users', function(room_data){
+    room_people = room_data.people;
+    if (new_user === true){
+      if (room_data.messages){
+        var messages = room_data.messages;
+        for (var i = 0; i < messages.length; i++){
+          var single_msg = chat_message_parser(messages[i]);
+          $('#messages').append($('<li>').html(single_msg));
+        }
+        new_user = false;  
+      }
+    }
+    
+    update_rooms_list(user_rooms);
+    
+    $('#people').empty();
+    for (var i = 0; i < room_people.length; i++) {
+      var name = room_people[i];
+      $('#people').append('<li id="' + name + '" class="active">' + name + '</li>');
+    };
+  });
+
+
+  socket.emit('user config', data);
+
+  $('#top').on('click', function(){
+    window.location = "/";
+  });  
+
   socket.on('room details', function(room){
     $('#messages').empty();
     window.socket_room = room;
@@ -138,126 +169,73 @@
     $('#roomname h3').text(room);
     
   });
+function message_handler(message){
+      if (message.length > 0){
+        var url = get_url(message);
+        var image = get_image(message);
 
+        var helper = message.match('/help');
+        if (helper){
+          $('#messages').prepend($('<li>').html('Type "/listrooms" to list your subreddits<br>Type "/joinroom roomname" to join a room. <br>You can add links, gifs, or images to chat messages.<br>Typing "/help" brings up this list.'));
+        }
+
+        var list_rooms = message.match('/listrooms');
+        if (list_rooms){
+          if (currentUser){
+            $.each(user_rooms, function(i, room){
+            $('#messages').prepend($('<span>').html(" | " + room + " | ")); 
+            });
+            $('#messages').prepend("<li>");
+            $('#messages').prepend($('<li>').html('Here are your room options. use "/joinroom roomname" to join. '));
+          }else {
+          $('#messages').prepend($('<li>').html("You're not signed in to Reddit. Sign in to Reddit to see Reddit Subreddit Rooms."));
+          };
+        };
+
+        var match = message.match("/joinroom");
+        if (match){
+          var roomname = message.replace("/joinroom ", "");
+          change_room = {
+            last_room: window.socket_room,
+            room: roomname,
+            name: username
+          }
+          socket.emit('change room', change_room);
+        } else {
+          var date = new Date();
+          var time = date.toLocaleTimeString();
+          
+          var hash = {
+            date: date,
+            name: username,
+            text: message,
+            stamp: time,
+            url: url,
+            image: image
+          };
+        
+          if (window.socket_room !== "lobby") {
+            hash.socket_room = window.socket_room;
+            socket.emit('chat message in room', hash);
+          } else {
+            hash.socket_room = window.socket_room;
+            socket.emit('chat message', hash);
+          }
+        }
+        $('#m').val("");
+        return false; 
+      }
+}
 
 $('#message_submit').on('click', function(){
   var message = $('#m').val();
-  if (message.length > 0){
-    var url = get_url(message);
-    var image = get_image(message);
-
-    var helper = message.match('/help');
-    if (helper){
-      $('#messages').prepend($('<li>').html('Type "/listrooms" to list your subreddits<br>Type "/joinroom roomname" to join a room. <br>You can add links, gifs, or images to chat messages.<br>Typing "/help" brings up this list.'));
-    }
-
-    var list_rooms = message.match('/listrooms');
-    if (list_rooms){
-      if (currentUser){
-        $.each(user_rooms, function(i, room){
-        $('#messages').prepend($('<span>').html(" | " + room + " | ")); 
-        });
-        $('#messages').prepend("<li>");
-        $('#messages').prepend($('<li>').html('Here are your room options. use "/joinroom roomname" to join. '));
-      }else {
-      $('#messages').prepend($('<li>').html("You're not signed in to Reddit. Sign in to Reddit to see Reddit Subreddit Rooms."));
-      };
-    };
-
-    var match = message.match("/joinroom");
-    if (match){
-      var roomname = message.replace("/joinroom ", "");
-      change_room = {
-        last_room: window.socket_room,
-        room: roomname,
-        name: username
-      }
-      socket.emit('change room', change_room);
-    } else {
-      var date = new Date();
-      var time = date.toLocaleTimeString();
-      
-      var hash = {
-        date: date,
-        name: username,
-        text: message,
-        stamp: time,
-        url: url,
-        image: image
-      };
-    
-      if (window.socket_room !== "lobby") {
-        hash.socket_room = window.socket_room;
-        socket.emit('chat message in room', hash);
-      } else {
-        hash.socket_room = window.socket_room;
-        socket.emit('chat message', hash);
-      }
-    }
-    $('#m').val("");
-    return false; 
-  }
+    message_handler(message);
 });
 
 $('#m').keypress(function(){
   if (event.keyCode == 13) {
     var message = $('#m').val();
-    if (message.length > 0){
-      var url = get_url(message);
-    var image = get_image(message);
-
-    var helper = message.match('/help');
-    if (helper){
-      $('#messages').prepend($('<li>').html('Type "/listrooms" to list your subreddits<br>Type "/joinroom roomname" to join a room. <br>You can add links, gifs, or images to chat messages.<br>Typing "/help" brings up this list.'));
-    }
-
-    var list_rooms = message.match('/listrooms');
-    if (list_rooms){
-      if (currentUser){
-        $.each(user_rooms, function(i, room){
-        $('#messages').prepend($('<span>').html(" | " + room + " | ")); 
-        });
-        $('#messages').prepend("<li>");
-        $('#messages').prepend($('<li>').html('Here are your room options. use "/joinroom roomname" to join. '));
-      }else {
-      $('#messages').prepend($('<li>').html("You're not signed in to Reddit. Sign in to Reddit to see Reddit Subreddit Rooms."));
-      };
-    };
-
-    var match = message.match("/joinroom");
-    if (match){
-      var roomname = message.replace("/joinroom ", "");
-
-      change_room = {
-        last_room: window.socket_room,
-        room: roomname,
-        name: username
-      }
-      socket.emit('change room', change_room);
-    } else {
-      var date = new Date();
-      var time = date.toLocaleTimeString();
-      
-      var hash = {
-        date: date,
-        name: username,
-        text: message,
-        stamp: time,
-        url: url,
-        image: image
-      };
-    
-      if (window.socket_room !== "lobby") {
-        hash.socket_room = window.socket_room;
-        socket.emit('chat message in room', hash);
-      } else {
-        hash.socket_room = window.socket_room;
-        socket.emit('chat message', hash);
-      }
-    }
-    $('#m').val("");
-    return false; 
-    };
+    message_handler(message);
   }; 
 });
 
@@ -272,22 +250,7 @@ $('#m').keypress(function(){
 
   socket.on('chat message', function(msg){
     if ( msg.socket_room === window.socket_room ) {
-      var processed_user, processed_msg, processed_stamp, print_message, processed_image, processed_link;
-
-      processed_user = '<p><span class="user">' + msg.name + '</span>';
-      processed_msg = '<span class="message">' + msg.text + '</span>';
-      processed_stamp = '<span class="time"><em>@' + msg.stamp + '</em></span></p>';
-      
-      if (msg.url != "none"){
-        processed_link = '<span class="message"><a href="' + msg.url + '" target="_blank">link</a></span>';
-      } else{
-        processed_link = "";
-      };
-      print_message = processed_user + ": " + processed_msg + " " + processed_link + " " + processed_stamp;
-      
-      if (msg.image != "none"){
-        print_message = print_message + "<img class='img' src='" + msg.image +"' max-width='100%'>";
-      };
+      var print_message = chat_message_parser(msg);
       $('#messages').prepend($('<li>').html(print_message));
     }
   });
