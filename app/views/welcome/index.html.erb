@@ -35,7 +35,7 @@
 <script>
 
 // $(function(){
-  var username, change_room, user_rooms, room_people;
+  var username, change_room, user_rooms = [], room_people;
 
   if (currentUser != undefined){
     username = currentUser.name;
@@ -48,11 +48,20 @@
     };
   };
   var data = {username: username};
+  
+  update_rooms_list = function(rooms){
+    $('#rooms').empty();
+    for (room in rooms){
+      $('#rooms').append('<li id="' + rooms[room] + '">' + rooms[room] + '</li>');
+    }
+  }
 
   window.socket_room = "lobby";
+  user_rooms.push(window.socket_room);
   window.userName = $("span.current_user").text() || "Anonymous";
 
   var socket = io("<%= Rails.configuration.socket_url %>");
+  
 
   $('#random_chat').on('click', function(){
     socket.emit('random chat', data);
@@ -61,17 +70,18 @@
   });
 
   socket.on('random chat', function(message){
-    console.log(message);
   });
 
   socket.on('all users', function(allUsers){
-    console.log("All users:", allUsers);
+    console.log(allUsers);
     room_people = allUsers;
+
+    update_rooms_list(user_rooms);
+    
     $('#people').empty();
-    for (var username in room_people) {
-      if (room_people.hasOwnProperty(username))
-        var name = room_people[username].username;
-      $('#people').append('<li>' + name + '</li>');
+    for (i in room_people) {
+      var name = room_people[i];
+      $('#people').append('<li id="' + name + '" class="active">' + name + '</li>');
     };
   });
 
@@ -86,7 +96,6 @@
   
   
   socket.emit('user config', data);
-  console.log("Room?", window.socket_room);
 
   $('#top').on('click', function(){
     window.location = "/";
@@ -122,10 +131,12 @@
     return url === null ? "none" : url;
   }
 
-  socket.on('room details', function(change_room){
+  socket.on('room details', function(room){
     $('#messages').empty();
-    $('#roomname h6').text(change_room.room);
-    window.socket_room = change_room.room;
+    window.socket_room = room;
+    user_rooms.push(room);
+    $('#roomname h3').text(room);
+    
   });
 
 
@@ -216,6 +227,7 @@ $('#m').keypress(function(){
     var match = message.match("/joinroom");
     if (match){
       var roomname = message.replace("/joinroom ", "");
+
       change_room = {
         last_room: window.socket_room,
         room: roomname,
@@ -251,6 +263,8 @@ $('#m').keypress(function(){
 
   
   socket.on('chat message room change', function (msg) {
+    var thisguy = "#" + msg.name;
+    $(thisguy).toggleClass('away');
     $('#messages').prepend($('<li>').html(
       '<span class="message">YapsBot: ' + msg.name + " " + msg.text + " " + '</span><span class="time">' + msg.stamp + '</span>'
     ));
@@ -290,7 +304,6 @@ $('#m').keypress(function(){
   });
   //passes deets of leaving person
   socket.on("user disconnected", function (data) {
-    console.log(data);
     $('#messages').prepend($('<li>').html(
       '<span class="message">YapsBot: ' + data.name + " " + data.text + " " + '</span><span class="time">' + data.stamp + '</span>'
     ));
