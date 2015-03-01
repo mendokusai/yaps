@@ -23,9 +23,17 @@
   </nav>
   <div id="roomname"><h3>Lobby</h3></div>
   <div id='main'>
-  <div id='direct_messages'><ul id='rooms'></ul></div>
-  <div id='message_box'><ul id="messages"></ul></div>
-  <div id='in_room'><ul id='people'></ul></div>
+    <div id='direct_messages'>
+      <h6 id='new_room'>Rooms</h6>
+      <ul id='rooms'></ul>
+    </div>
+    <div id='message_box'>
+      <ul id="messages"></ul>
+    </div>
+    <div id='in_room'>
+      <h6>People</h6>
+      <ul id='people'></ul>
+    </div>
   </div>
 </div>
 
@@ -144,7 +152,8 @@ var data = {username: username};
   });
 
   socket.on('all users', function(room_data){
-    room_people = room_data.people;
+    room_people = room_data.people[window.socket_room];
+
     if (new_user === true){
       if (room_data.messages){
         var messages = room_data.messages;
@@ -168,6 +177,23 @@ var data = {username: username};
 
   socket.emit('user config', data);
 
+  $('#in_room').on('click', 'li', function(){
+    var thisguy = $(this).attr('id');
+    if (thisguy !== username){
+      var this_room = [thisguy, username];
+      this_room.sort().splice(1,0,"to");
+      var direct_room = this_room.join(" ");
+    change_room = {
+      last_room: window.socket_room,
+      room: direct_room,
+      name1: username,
+      name2: thisguy
+    }
+    new_user = true;
+    socket.emit('direct chat', change_room);
+    }
+  });
+
   $('#rooms').on('click', 'li', function(){
     var thisone = $(this).attr('id');
     console.log(thisone);
@@ -177,6 +203,7 @@ var data = {username: username};
             room: thisone,
             name: username
       }
+    new_user = true;
     socket.emit('change room', change_room);
     }
   });
@@ -199,7 +226,7 @@ function message_handler(message){
 
         var helper = message.match('/help');
         if (helper){
-          $('#messages').prepend($('<li>').html('Type "/listrooms" to list your subreddits<br>Type "/joinroom roomname" to join a room. <br>You can add links, gifs, or images to chat messages.<br>Typing "/help" brings up this list.'));
+          $('#messages').prepend($('<li>').html('Type "/listrooms" to list your subreddits<br>Type "/joinroom roomname" to join a room.<br>You can add links, gifs, or images to chat messages.<br>Typing "/help" brings up this list.'));
         }
 
         var list_rooms = message.match('/listrooms');
@@ -223,6 +250,7 @@ function message_handler(message){
             room: roomname,
             name: username
           }
+          new_user = true;
           socket.emit('change room', change_room);
         } else {
           var date = new Date();
@@ -249,6 +277,16 @@ function message_handler(message){
         return false; 
       }
 }
+$('#new_room').on('click', function(){
+  var room = prompt("What room would you like to go to? ");
+  change_room = {
+            last_room: window.socket_room,
+            room: room,
+            name: username
+          }
+          new_user = true;
+          socket.emit('change room', change_room);
+});
 
 $('#message_submit').on('click', function(){
   var message = $('#m').val();

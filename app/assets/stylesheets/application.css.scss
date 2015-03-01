@@ -91,7 +91,7 @@ h3 {
 #direct_messages {
 	/* background: blue; */
 	/*margin-left: -7em;*/
-	width: 15%;
+	width: 11%;
 	height: 10em;
 	border: 2px solid rgb(241, 241, 241);
 	float: left;
@@ -101,7 +101,7 @@ h3 {
 #rooms li {
 	display: block;
 	margin-left: -2em;
-	padding-left: 1em;
+	padding-left: 0.1em;
 }
 #rooms li:hover {
 	background-color: #2796e5;
@@ -112,7 +112,7 @@ h3 {
 
 #message_box {
 	float: left;
-	width: 63%;
+	width: 73%;
 }
 #people {
 	margin-left: -2em;
@@ -120,7 +120,7 @@ h3 {
 
 #people li {
 	display: block;
-	padding-left: 1em;
+	padding-left: 0.1em;
 }
 
 #people li:hover {
@@ -131,7 +131,7 @@ h3 {
 }
 
 #in_room {
-	width: 19%;
+	width: 14%;
 	height: 10em;
 	float: right;
 	border: 2px solid #f1f1f1;
