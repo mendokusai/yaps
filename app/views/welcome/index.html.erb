@@ -36,14 +36,22 @@
 
 // $(function(){
   
-  var data = {username: username};
+  
   
 
   function update_rooms_list(rooms){
+    var rooms_block = "", room_arr = [];
     $('#rooms').empty();
-    for (room in rooms){
-      $('#rooms').append('<li id="' + rooms[room] + '">' + rooms[room] + '</li>');
+    for (var i = 0; i < rooms.length; i++){
+      var index = room_arr.indexOf(rooms[i]);
+      if (index == -1){
+        room_arr.push(rooms[i]);  
+      }
     }
+    for (var i = 0; i < room_arr.length; i++){
+      rooms_block = rooms_block + '<li id="' + room_arr[i] + '">' + room_arr[i] + '</li>';
+    }
+    $('#rooms').html(rooms_block);
   }
 
   function chat_message_parser(msg){
@@ -95,20 +103,7 @@
     return url === null ? "none" : url;
   }
 
-  var username, change_room, user_rooms = [], room_people, new_user = true;
-
-  if (currentUser != undefined){
-    username = currentUser.name;
-  } else{
-    username = getParameterByName('name');
-    if (username.length >20){
-      username.split("");
-      username.splice(0,20);
-      username.join();
-    };
-  };
-
-  if (currentUser){
+if (currentUser){
   $.get("/return_reddit", function (data) {    
     window.profile = data;
     user_rooms = window.profile.subreddits.map(function(el){
@@ -116,6 +111,21 @@
     });
   });
 };
+
+var username, change_room, user_rooms = [], room_people, new_user = true;
+
+if (currentUser != undefined){
+  username = currentUser.name;
+} else{
+  username = getParameterByName('name');
+  if (username.length >20){
+    username.split("");
+    username.splice(0,20);
+    username.join();
+  };
+};
+
+var data = {username: username};
 
   window.socket_room = "lobby";
   user_rooms.push(window.socket_room);
@@ -157,6 +167,19 @@
 
 
   socket.emit('user config', data);
+
+  $('#rooms').on('click', 'li', function(){
+    var thisone = $(this).attr('id');
+    console.log(thisone);
+    if (thisone != window.socket_room){
+      change_room = {
+            last_room: window.socket_room,
+            room: thisone,
+            name: username
+      }
+    socket.emit('change room', change_room);
+    }
+  });
 
   $('#top').on('click', function(){
     window.location = "/";
@@ -241,8 +264,8 @@ $('#m').keypress(function(){
 
   
   socket.on('chat message room change', function (msg) {
-    var thisguy = "#" + msg.name;
-    $(thisguy).toggleClass('away');
+    // var thisguy = "#" + msg.name;
+    // $(thisguy).toggleClass('away');
     $('#messages').prepend($('<li>').html(
       '<span class="message">YapsBot: ' + msg.name + " " + msg.text + " " + '</span><span class="time">' + msg.stamp + '</span>'
     ));
