@@ -118,7 +118,7 @@
 
         var helper = message.match('/help');
         if (helper){
-          $('#messages').prepend($('<li>').html('Type "/listrooms" to list your subreddits<br>Type "/joinroom roomname" to join a room.<br>You can add links, gifs, or images to chat messages.<br>Typing "/help" brings up this list.'));
+          $('#messages').prepend($('<li>').html('Welcome to Yaps!<br><br>Options:<br>Type "/listrooms" to list your subreddits<br>Type "/joinroom roomname" to join a room -OR- double click on the word "Rooms" on the left.<br>To send direct messages, double-click on user names on the right.<br>In Yaps, you can add links, gifs, or jpeg images to chat messages.<br>Typing "/help" brings up this list at any time.'));
           $('#m').val("");
           return false; 
         }
