@@ -119,6 +119,8 @@
         var helper = message.match('/help');
         if (helper){
           $('#messages').prepend($('<li>').html('Type "/listrooms" to list your subreddits<br>Type "/joinroom roomname" to join a room.<br>You can add links, gifs, or images to chat messages.<br>Typing "/help" brings up this list.'));
+          $('#m').val("");
+          return false; 
         }
 
         var list_rooms = message.match('/listrooms');
@@ -132,6 +134,8 @@
           }else {
           $('#messages').prepend($('<li>').html("You're not signed in to Reddit. Sign in to Reddit to see Reddit Subreddit Rooms."));
           };
+          $('#m').val("");
+          return false; 
         };
 
         var match = message.match("/joinroom");
