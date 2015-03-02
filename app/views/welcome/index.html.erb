@@ -111,115 +111,7 @@
     return url === null ? "none" : url;
   }
 
-if (currentUser){
-  $.get("/return_reddit", function (data) {    
-    window.profile = data;
-    user_rooms = window.profile.subreddits.map(function(el){
-      return el.display_name;
-    });
-  });
-};
-
-var username, change_room, user_rooms = [], room_people, new_user = true;
-
-if (currentUser != undefined){
-  username = currentUser.name;
-} else{
-  username = getParameterByName('name');
-  if (username.length >20){
-    username.split("");
-    username.splice(0,20);
-    username.join();
-  };
-};
-
-var data = {username: username};
-
-  window.socket_room = "lobby";
-  user_rooms.push(window.socket_room);
-  window.userName = $("span.current_user").text() || "Anonymous";
-
-  var socket = io("<%= Rails.configuration.socket_url %>");
-  
-
-  $('#random_chat').on('click', function(){
-    socket.emit('random chat', data);
-    $('#messages').empty();
-    $('#roomname h6').html("Random Room!");
-  });
-
-  socket.on('random chat', function(message){
-  });
-
-  socket.on('all users', function(room_data){
-    room_people = room_data.people[window.socket_room];
-
-    if (new_user === true){
-      if (room_data.messages){
-        var messages = room_data.messages;
-        for (var i = 0; i < messages.length; i++){
-          var single_msg = chat_message_parser(messages[i]);
-          $('#messages').append($('<li>').html(single_msg));
-        }
-        new_user = false;  
-      }
-    }
-    
-    update_rooms_list(user_rooms);
-    
-    $('#people').empty();
-    for (var i = 0; i < room_people.length; i++) {
-      var name = room_people[i];
-      $('#people').append('<li id="' + name + '" class="active">' + name + '</li>');
-    };
-  });
-
-
-  socket.emit('user config', data);
-
-  $('#in_room').on('click', 'li', function(){
-    var thisguy = $(this).attr('id');
-    if (thisguy !== username){
-      var this_room = [thisguy, username];
-      this_room.sort().splice(1,0,"to");
-      var direct_room = this_room.join(" ");
-    change_room = {
-      last_room: window.socket_room,
-      room: direct_room,
-      name1: username,
-      name2: thisguy
-    }
-    new_user = true;
-    socket.emit('direct chat', change_room);
-    }
-  });
-
-  $('#rooms').on('click', 'li', function(){
-    var thisone = $(this).attr('id');
-    console.log(thisone);
-    if (thisone != window.socket_room){
-      change_room = {
-            last_room: window.socket_room,
-            room: thisone,
-            name: username
-      }
-    new_user = true;
-    socket.emit('change room', change_room);
-    }
-  });
-
-  $('#top').on('click', function(){
-    window.location = "/";
-  });  
-
-  socket.on('room details', function(room){
-    $('#messages').empty();
-    window.socket_room = room;
-    user_rooms.push(room);
-    $('#roomname h3').text(room);
-    
-  });
-function message_handler(message){
+  function message_handler(message){
       if (message.length > 0){
         var url = get_url(message);
         var image = get_image(message);
@@ -277,15 +169,135 @@ function message_handler(message){
         return false; 
       }
 }
-$('#new_room').on('click', function(){
+
+if (currentUser){
+  $.get("/return_reddit", function (data) {    
+    window.profile = data;
+    user_rooms = window.profile.subreddits.map(function(el){
+      return el.display_name;
+    });
+  });
+};
+
+var username, change_room, user_rooms = [], room_people, new_user = true;
+
+if (currentUser != undefined){
+  username = currentUser.name;
+} else{
+  username = getParameterByName('name');
+  if (username.length >20){
+    username.split("");
+    username.splice(0,20);
+    username.join();
+  };
+};
+
+var data = {username: username};
+
+  window.socket_room = "lobby";
+  user_rooms.push(window.socket_room);
+  window.userName = $("span.current_user").text() || "Anonymous";
+
+  var socket = io("<%= Rails.configuration.socket_url %>");
+  
+
+  $('#random_chat').on('click', function(){
+    socket.emit('random chat', data);
+    $('#messages').empty();
+    $('#roomname h6').html("Random Room!");
+  });
+
+  socket.on('random chat', function(message){
+  });
+
+  socket.on('direct message', function(message){
+    console.log(message.room);
+    console.log(message.message);
+    user_rooms.push(message.room);
+    debugger;
+    update_rooms_list(message.room);
+  });
+
+  socket.on('all users', function(room_data){
+    room_people = room_data.people[window.socket_room];
+
+    if (new_user === true){
+      if (room_data.messages){
+        var messages = room_data.messages;
+        for (var i = 0; i < messages.length; i++){
+          var single_msg = chat_message_parser(messages[i]);
+          $('#messages').append($('<li>').html(single_msg));
+        }
+        new_user = false;  
+      }
+    }
+    
+    update_rooms_list(user_rooms);
+    
+    $('#people').empty();
+    for (var i = 0; i < room_people.length; i++) {
+      var name = room_people[i];
+      $('#people').append('<li id="' + name + '" class="active">' + name + '</li>');
+    };
+  });
+
+
+  socket.emit('user config', data);
+
+  $('#in_room').on('dblclick', 'li', function(){
+    var thisguy = $(this).attr('id');
+    if (thisguy !== username){
+      var this_room = [thisguy, username];
+      this_room.sort().splice(1,0,"to");
+      var direct_room = this_room.join(" ");
+    change_room = {
+      last_room: window.socket_room,
+      room: direct_room,
+      name1: username,
+      name2: thisguy
+    }
+    new_user = true;
+    socket.emit('direct chat', change_room);
+    }
+  });
+
+  $('#rooms').on('click', 'li', function(){
+    var thisone = $(this).attr('id');
+    console.log(thisone);
+    if (thisone != window.socket_room){
+      change_room = {
+            last_room: window.socket_room,
+            room: thisone,
+            name: username
+      }
+    new_user = true;
+    socket.emit('change room', change_room);
+    }
+  });
+
+  $('#top').on('click', function(){
+    window.location = "/";
+  });  
+
+  socket.on('room details', function(room){
+    $('#messages').empty();
+    window.socket_room = room;
+    user_rooms.push(room);
+    $('#roomname h3').text(room);
+    
+  });
+
+$('#new_room').on('dblclick', function(){
   var room = prompt("What room would you like to go to? ");
-  change_room = {
+  if (room !== null){
+    change_room = {
             last_room: window.socket_room,
             room: room,
             name: username
           }
           new_user = true;
           socket.emit('change room', change_room);
+  }
 });
 
 $('#message_submit').on('click', function(){
